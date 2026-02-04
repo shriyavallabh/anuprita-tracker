@@ -85,6 +85,10 @@
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -99,7 +103,7 @@
     /* ============ Header ============ */
     .header {
       background: var(--bg-primary);
-      padding: 20px 20px 18px;
+      padding: 12px 16px;
       text-align: center;
       border-bottom: 1px solid var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
@@ -111,22 +115,93 @@
     }
     .header-content { flex: 1; }
     .header h1 {
-      font-size: 1.2rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-primary);
       letter-spacing: -0.01em;
-      margin-bottom: 2px;
+      margin-bottom: 0;
     }
     .header p {
-      font-size: 0.82rem;
+      font-size: 0.72rem;
       font-weight: 400;
       color: var(--text-secondary);
     }
-    .mc-login-btn {
+
+    /* ============ Page Containers ============ */
+    .page { display: none; min-height: calc(100vh - 56px); }
+    .page.active { display: block; animation: pageFadeIn 0.25s ease-out; }
+
+    /* ============ Bottom Nav ============ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+      display: flex;
+      z-index: 1000;
+      box-shadow: 0 -1px 4px rgba(0,0,0,0.04);
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.15s ease;
+    }
+    .nav-tab.active { color: var(--accent); font-weight: 600; }
+    .nav-tab.active::before {
+      content: '';
       position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 0;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 0 0 2px 2px;
+    }
+    .nav-tab svg { width: 22px; height: 22px; }
+
+    /* ============ Container ============ */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 14px calc(56px + 16px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* ============ Page Title (Submit page) ============ */
+    .page-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .page-title-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warning);
+      flex-shrink: 0;
+    }
+
+    /* ============ MC Login Button ============ */
+    .mc-login-btn {
       padding: 5px 10px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -143,13 +218,6 @@
       background: var(--accent);
       color: white;
       border-color: var(--accent);
-    }
-
-    /* ============ Container ============ */
-    .container {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 12px 14px 100px;
     }
 
     /* ============ Stats Bar ============ */
@@ -218,7 +286,6 @@
       flex-shrink: 0;
     }
     .icon-issues { background: var(--accent); }
-    .icon-form { background: var(--warning); }
 
     /* ============ Tab Switcher ============ */
     .tab-switcher {
@@ -642,14 +709,6 @@
       margin-bottom: 5px;
     }
     .form-label .required { color: var(--critical); font-weight: 600; }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 480px) {
-      .form-row { grid-template-columns: 1fr; }
-    }
 
     .form-input {
       width: 100%;
@@ -897,39 +956,32 @@
       color: var(--text-muted);
       margin-top: 2px;
     }
-    .success-close-btn {
-      display: block;
-      width: 100%;
+    .success-footer-actions {
+      display: flex;
+      border-top: 1px solid var(--border-light);
+    }
+    .success-action-btn {
+      flex: 1;
       padding: 10px;
       border: none;
       background: none;
-      color: var(--text-muted);
       font-size: 0.75rem;
       font-family: inherit;
       cursor: pointer;
-      border-top: 1px solid var(--border-light);
-      transition: color 0.15s ease;
+      transition: color 0.15s ease, background 0.15s ease;
     }
-    .success-close-btn:hover { color: var(--text-secondary); }
-
-    /* ============ Sticky Mobile Submit ============ */
-    .sticky-submit {
-      display: none;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      padding: 10px 16px;
-      padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
-      z-index: 100;
+    .success-action-btn:first-child {
+      border-right: 1px solid var(--border-light);
     }
-    .sticky-submit .submit-btn { margin: 0; }
-    @media (max-width: 640px) {
-      .sticky-submit { display: block; }
-      .form-submit-desktop { display: none; }
+    .success-view-btn {
+      color: var(--accent);
+      font-weight: 500;
     }
+    .success-view-btn:hover { background: #EEF2FF; }
+    .success-close-btn {
+      color: var(--text-muted);
+    }
+    .success-close-btn:hover { color: var(--text-secondary); background: var(--bg-secondary); }
 
     /* ============ MC PIN Modal ============ */
     .pin-modal {
@@ -1044,100 +1096,61 @@
       <h1>अनुप्रिता बी को. हौ. सो. लि.</h1>
       <p>सोसायटी सूचना / तक्रार नोंदणी</p>
     </div>
-    <button class="mc-login-btn" id="mcLoginBtn" onclick="handleMcLogin()">MC लॉगिन</button>
   </div>
 
-  <div class="container">
+  <!-- ============ PAGE: Submit ============ -->
+  <div class="page" id="pageSubmit">
+    <div class="container">
 
-    <!-- Success Confirmation -->
-    <div id="successCard" class="success-card">
-      <div class="success-header">
-        <svg class="success-check" viewBox="0 0 28 28" fill="none">
-          <circle cx="14" cy="14" r="14" fill="rgba(255,255,255,0.2)"/>
-          <path d="M9 14.5L12.5 18L19 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div class="success-title">तुमची सूचना यशस्वीरित्या नोंदवली</div>
-      </div>
-      <div class="success-body">
-        <div class="success-subtitle">खालील तक्रारी ओळखल्या:</div>
-        <div id="successDetails"></div>
-      </div>
-      <button class="success-close-btn" onclick="closeSuccess()">बंद करा</button>
-    </div>
-
-    <!-- Stats Grid -->
-    <div id="statsGrid" class="stats-grid"></div>
-
-    <!-- Issues Section -->
-    <div class="section-card fade-in-up" style="animation-delay: 0.1s">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon icon-issues"></div>
-          सद्यस्थिती
+      <!-- Success Confirmation -->
+      <div id="successCard" class="success-card">
+        <div class="success-header">
+          <svg class="success-check" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="14" fill="rgba(255,255,255,0.2)"/>
+            <path d="M9 14.5L12.5 18L19 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="success-title">तुमची सूचना यशस्वीरित्या नोंदवली</div>
+        </div>
+        <div class="success-body">
+          <div class="success-subtitle">खालील तक्रारी ओळखल्या:</div>
+          <div id="successDetails"></div>
+        </div>
+        <div class="success-footer-actions">
+          <button class="success-action-btn success-view-btn" onclick="navigateTo('tracker')">तक्रार पहा &rarr;</button>
+          <button class="success-action-btn success-close-btn" onclick="closeSuccess()">बंद करा</button>
         </div>
       </div>
 
-      <!-- Tab Switcher -->
-      <div class="tab-switcher">
-        <button class="tab-btn active" onclick="switchTab('table', this)">सूची</button>
-        <button class="tab-btn" onclick="switchTab('kanban', this)">बोर्ड</button>
-      </div>
-
-      <!-- Filters -->
-      <div class="filters" id="filterBar"></div>
-
-      <!-- Table View (default) -->
-      <div id="tableView">
-        <div id="issuesList">
-          <table class="skeleton-table">
-            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
-            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-medium"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
-            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
-            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-medium"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
-            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
-          </table>
-        </div>
-      </div>
-
-      <!-- Kanban View -->
-      <div id="kanbanView" class="kanban-board"></div>
-    </div>
-
-    <!-- Form Section -->
-    <div class="section-card fade-in-up" style="animation-delay: 0.2s">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon icon-form"></div>
-          नवीन सूचना / तक्रार
-        </div>
+      <div class="page-title">
+        <div class="page-title-icon"></div>
+        तक्रार / सूचना नोंदवा
       </div>
 
       <form id="complaintForm" onsubmit="handleSubmit(event)">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">सदनिका क्रमांक <span class="required">*</span></label>
-            <select id="flat" class="form-input" required>
-              <option value="">-- निवडा --</option>
-              <option value="101">101</option><option value="102">102</option>
-              <option value="201">201</option><option value="202">202</option>
-              <option value="301">301</option><option value="302">302</option>
-              <option value="401">401</option><option value="402">402</option>
-              <option value="501">501</option><option value="502">502</option>
-              <option value="601">601</option><option value="602">602</option>
-              <option value="701">701</option><option value="702">702</option>
-              <option value="801">801</option><option value="802">802</option>
-              <option value="901">901</option><option value="902">902</option>
-              <option value="1001">1001</option><option value="1002">1002</option>
-              <option value="1101">1101</option><option value="1102">1102</option>
-              <option value="1201">1201</option><option value="1202">1202</option>
-              <option value="Shop 1">Shop 1</option><option value="Shop 2">Shop 2</option>
-              <option value="Office">Office</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">नाव <span class="required">*</span></label>
-            <input type="text" id="name" class="form-input" required placeholder="तुमचे नाव">
-          </div>
+        <div class="form-group">
+          <label class="form-label">सदनिका क्रमांक <span class="required">*</span></label>
+          <select id="flat" class="form-input" required>
+            <option value="">-- निवडा --</option>
+            <option value="101">101</option><option value="102">102</option>
+            <option value="201">201</option><option value="202">202</option>
+            <option value="301">301</option><option value="302">302</option>
+            <option value="401">401</option><option value="402">402</option>
+            <option value="501">501</option><option value="502">502</option>
+            <option value="601">601</option><option value="602">602</option>
+            <option value="701">701</option><option value="702">702</option>
+            <option value="801">801</option><option value="802">802</option>
+            <option value="901">901</option><option value="902">902</option>
+            <option value="1001">1001</option><option value="1002">1002</option>
+            <option value="1101">1101</option><option value="1102">1102</option>
+            <option value="1201">1201</option><option value="1202">1202</option>
+            <option value="Shop 1">Shop 1</option><option value="Shop 2">Shop 2</option>
+            <option value="Office">Office</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">नाव <span class="required">*</span></label>
+          <input type="text" id="name" class="form-input" required placeholder="तुमचे नाव">
         </div>
 
         <div class="form-group">
@@ -1169,22 +1182,84 @@
           <div class="photo-preview" id="photoPreview"></div>
         </div>
 
-        <div class="form-submit-desktop">
-          <button type="submit" class="submit-btn" id="submitBtn">सबमिट करा</button>
-        </div>
+        <button type="submit" class="submit-btn" id="submitBtn">सबमिट करा</button>
       </form>
-    </div>
 
-    <div class="footer">
-      <div>अनुप्रिता बी को. हौ. सो. लि.</div>
-      <div class="footer-tagline">AI-सहाय्यित तक्रार व्यवस्थापन &middot; <span id="footerYear"></span></div>
+      <div class="footer">
+        <div>अनुप्रिता बी को. हौ. सो. लि.</div>
+        <div class="footer-tagline">AI-सहाय्यित तक्रार व्यवस्थापन &middot; <span class="footer-year"></span></div>
+      </div>
     </div>
   </div>
 
-  <!-- Sticky mobile submit -->
-  <div class="sticky-submit">
-    <button type="button" class="submit-btn" id="submitBtnMobile" onclick="triggerSubmit()">सबमिट करा</button>
+  <!-- ============ PAGE: Tracker ============ -->
+  <div class="page" id="pageTracker">
+    <div class="container">
+
+      <!-- Stats Grid -->
+      <div id="statsGrid" class="stats-grid"></div>
+
+      <!-- Issues Section -->
+      <div class="section-card fade-in-up" style="animation-delay: 0.1s">
+        <div class="section-header">
+          <div class="section-title">
+            <div class="section-icon icon-issues"></div>
+            सद्यस्थिती
+          </div>
+          <button class="mc-login-btn" id="mcLoginBtn" onclick="handleMcLogin()">MC लॉगिन</button>
+        </div>
+
+        <!-- Tab Switcher -->
+        <div class="tab-switcher">
+          <button class="tab-btn active" onclick="switchTab('table', this)">सूची</button>
+          <button class="tab-btn" onclick="switchTab('kanban', this)">बोर्ड</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters" id="filterBar"></div>
+
+        <!-- Table View (default) -->
+        <div id="tableView">
+          <div id="issuesList">
+            <table class="skeleton-table">
+              <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+              <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-medium"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+              <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+              <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-medium"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+              <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Kanban View -->
+        <div id="kanbanView" class="kanban-board"></div>
+      </div>
+
+      <div class="footer">
+        <div>अनुप्रिता बी को. हौ. सो. लि.</div>
+        <div class="footer-tagline">AI-सहाय्यित तक्रार व्यवस्थापन &middot; <span class="footer-year"></span></div>
+      </div>
+    </div>
   </div>
+
+  <!-- ============ Bottom Navigation ============ -->
+  <nav class="bottom-nav">
+    <button class="nav-tab" data-page="submit" onclick="navigateTo('submit')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"/>
+        <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+      <span>तक्रार नोंदणी</span>
+    </button>
+    <button class="nav-tab" data-page="tracker" onclick="navigateTo('tracker')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 20V10"/>
+        <path d="M12 20V4"/>
+        <path d="M6 20v-6"/>
+      </svg>
+      <span>सद्यस्थिती</span>
+    </button>
+  </nav>
 
   <!-- Processing Overlay -->
   <div class="ai-overlay" id="aiOverlay">
@@ -1227,6 +1302,8 @@
     var selectedPhotos = [];
     var loadTimeout = null;
     var isMcAuthenticated = false;
+    var currentPage = 'submit';
+    var trackerDataLoaded = false;
 
     var statusMessages = [
       'तक्रार विश्लेषण सुरू...',
@@ -1238,11 +1315,48 @@
     ];
 
     // ============================================================
+    // Router
+    // ============================================================
+    function navigateTo(page) {
+      if (page === currentPage) return;
+      document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelector('.nav-tab[data-page="' + page + '"]').classList.add('active');
+      document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
+      history.replaceState(null, '', '#' + page);
+      currentPage = page;
+      if (page === 'tracker' && !trackerDataLoaded) {
+        loadIssues();
+        trackerDataLoaded = true;
+      }
+      window.scrollTo(0, 0);
+    }
+
+    function initRouter() {
+      var hash = location.hash.replace('#', '');
+      var page = (hash === 'tracker') ? 'tracker' : 'submit';
+      document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
+      document.querySelector('.nav-tab[data-page="' + page + '"]').classList.add('active');
+      currentPage = page;
+      if (page === 'tracker') {
+        loadIssues();
+        trackerDataLoaded = true;
+      }
+    }
+
+    window.addEventListener('hashchange', function() {
+      var page = location.hash.replace('#', '') === 'tracker' ? 'tracker' : 'submit';
+      navigateTo(page);
+    });
+
+    // ============================================================
     // Load on DOMContentLoaded
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('footerYear').textContent = new Date().getFullYear();
-      loadIssues();
+      document.querySelectorAll('.footer-year').forEach(function(el) {
+        el.textContent = new Date().getFullYear();
+      });
+      initRouter();
     });
 
     function loadIssues() {
@@ -1412,7 +1526,7 @@
                 '<line x1="16" y1="17" x2="8" y2="17"/>' +
               '</svg>' +
               '<div class="empty-title">या प्रकारच्या तक्रारी सापडल्या नाहीत</div>' +
-              '<div class="empty-sub">नवीन तक्रार नोंदवण्यासाठी खालील फॉर्म वापरा</div>' +
+              '<div class="empty-sub">नवीन तक्रार नोंदवण्यासाठी तक्रार नोंदणी पेज वापरा</div>' +
             '</div>';
           return;
         }
@@ -1808,10 +1922,6 @@
     // ============================================================
     // Form Submit
     // ============================================================
-    function triggerSubmit() {
-      document.getElementById('complaintForm').requestSubmit();
-    }
-
     function handleSubmit(e) {
       e.preventDefault();
 
@@ -1850,7 +1960,6 @@
             if (result.success) {
               showSuccess(result.results);
               resetForm();
-              loadIssues();
             } else {
               alert('तक्रार नोंदवता आली नाही: ' + (result.error || 'Unknown error'));
             }
@@ -1873,7 +1982,6 @@
 
     function showProcessingOverlay() {
       document.getElementById('submitBtn').disabled = true;
-      document.getElementById('submitBtnMobile').disabled = true;
       document.getElementById('aiProgressBar').style.animation = 'none';
       void document.getElementById('aiProgressBar').offsetWidth;
       document.getElementById('aiProgressBar').style.animation = 'progressBar 12s ease-out forwards';
@@ -1894,7 +2002,6 @@
     function hideProcessingOverlay() {
       document.getElementById('aiOverlay').classList.remove('show');
       document.getElementById('submitBtn').disabled = false;
-      document.getElementById('submitBtnMobile').disabled = false;
       if (statusInterval) {
         clearInterval(statusInterval);
         statusInterval = null;
@@ -1934,7 +2041,7 @@
       card.classList.add('show');
       card.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      setTimeout(function() { card.classList.remove('show'); }, 20000);
+      // Don't auto-hide — let user choose to view tracker or close
     }
 
     function closeSuccess() {
@@ -1948,6 +2055,7 @@
       document.getElementById('complaintForm').reset();
       selectedPhotos = [];
       renderPhotoPreview();
+      trackerDataLoaded = false; // Force refresh on next tab switch
     }
   </script>
 
