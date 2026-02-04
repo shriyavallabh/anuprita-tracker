@@ -41,6 +41,19 @@
       overflow-x: hidden;
     }
 
+    /* ============ Top Accent Bar ============ */
+    body::before {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--builder), var(--society));
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+    }
+
     /* ============ Animations ============ */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(12px); }
@@ -68,6 +81,10 @@
       0% { transform: scale(0.8); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -85,7 +102,14 @@
       padding: 20px 20px 18px;
       text-align: center;
       border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
+    .header-content { flex: 1; }
     .header h1 {
       font-size: 1.2rem;
       font-weight: 700;
@@ -97,6 +121,28 @@
       font-size: 0.82rem;
       font-weight: 400;
       color: var(--text-secondary);
+    }
+    .mc-login-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-primary);
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .mc-login-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .mc-login-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
     }
 
     /* ============ Container ============ */
@@ -127,6 +173,7 @@
       font-size: 1.5rem;
       font-weight: 700;
       line-height: 1.1;
+      animation: countUp 0.3s ease-out both;
     }
     .stat-label {
       font-size: 0.65rem;
@@ -172,6 +219,38 @@
     }
     .icon-issues { background: var(--accent); }
     .icon-form { background: var(--warning); }
+
+    /* ============ Tab Switcher ============ */
+    .tab-switcher {
+      display: flex;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-full);
+      padding: 3px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 7px 16px;
+      border: none;
+      border-radius: var(--radius-full);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      z-index: 1;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.active {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      font-weight: 600;
+    }
 
     /* ============ Filter Pills ============ */
     .filters {
@@ -229,13 +308,14 @@
       color: white;
     }
 
-    /* ============ Skeleton Loading ============ */
-    .skeleton-card {
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      margin-bottom: 8px;
+    /* ============ Skeleton Loading (Table) ============ */
+    .skeleton-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .skeleton-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-light);
     }
     .skeleton-line {
       height: 12px;
@@ -244,76 +324,92 @@
       background-size: 200% 100%;
       animation: shimmer 1.5s ease-in-out infinite;
     }
-    .skeleton-line-short { width: 40%; }
-    .skeleton-line-medium { width: 70%; margin-top: 8px; }
-    .skeleton-line-long { width: 90%; margin-top: 8px; }
-    .skeleton-badges {
-      display: flex;
-      gap: 6px;
-      margin-top: 10px;
-    }
-    .skeleton-badge {
-      width: 60px; height: 22px;
+    .skeleton-line-short { width: 30px; }
+    .skeleton-line-medium { width: 70%; }
+    .skeleton-line-long { width: 90%; }
+    .skeleton-badge-sm {
+      display: inline-block;
+      width: 50px; height: 20px;
       border-radius: var(--radius-full);
       background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border-light) 50%, var(--bg-tertiary) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s ease-in-out infinite;
     }
 
-    /* ============ Issue Cards ============ */
-    .issues-list { display: flex; flex-direction: column; gap: 8px; }
-
-    .issue-card {
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
+    /* ============ Table View ============ */
+    .issues-table-wrap {
       border-radius: var(--radius-md);
-      padding: 14px 16px;
-      padding-left: 20px;
-      position: relative;
-      transition: border-color 0.15s ease;
-      animation: fadeInUp 0.3s ease-out both;
-      cursor: default;
+      overflow: hidden;
+      border: 1px solid var(--border);
     }
-    .issue-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 12px; bottom: 12px;
-      width: 3px;
-      border-radius: 0 2px 2px 0;
+    .issues-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
     }
-    .issue-card.priority-high::before { background: var(--critical); }
-    .issue-card.priority-medium::before { background: var(--warning); }
-    .issue-card.priority-low::before { background: var(--success); }
-    .issue-card:hover { border-color: #D1D5DB; }
-
-    .issue-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 8px;
+    .issues-table thead th {
+      background: var(--bg-tertiary);
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      white-space: nowrap;
     }
-    .issue-number {
-      font-size: 0.7rem;
+    .issues-table tbody tr {
+      transition: background 0.12s ease;
+    }
+    .issues-table tbody tr:nth-child(even) {
+      background: var(--bg-secondary);
+    }
+    .issues-table tbody tr:hover {
+      background: #EEF2FF;
+    }
+    .issues-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+    }
+    .issues-table .col-num {
+      width: 36px;
       font-weight: 600;
       color: var(--text-muted);
-      flex-shrink: 0;
+      font-size: 0.72rem;
     }
-    .issue-title {
-      font-size: 0.85rem;
+    .issues-table .col-issue {
       font-weight: 500;
       color: var(--text-primary);
-      flex: 1;
-      line-height: 1.4;
+      line-height: 1.35;
     }
-    .issue-meta {
-      display: flex;
+    .issues-table .col-cat { width: 70px; }
+    .issues-table .col-status { width: 72px; }
+    .issues-table .col-count {
+      width: 42px;
+      text-align: center;
+    }
+    .count-circle {
+      display: inline-flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
+      justify-content: center;
+      min-width: 24px; height: 24px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0 6px;
     }
 
-    /* Badges */
+    @media (max-width: 420px) {
+      .issues-table .col-cat,
+      .issues-table thead th:nth-child(3) { display: none; }
+    }
+
+    /* ============ Badges ============ */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -324,60 +420,161 @@
       font-weight: 500;
       white-space: nowrap;
     }
-    .priority-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .badge-high { background: #FEF2F2; color: #B91C1C; }
-    .badge-high .priority-dot { background: var(--critical); }
-    .badge-medium { background: #FFFBEB; color: #B45309; }
-    .badge-medium .priority-dot { background: var(--warning); }
-    .badge-low { background: #F0FDF4; color: #15803D; }
-    .badge-low .priority-dot { background: var(--success); }
     .badge-builder { background: #F5F3FF; color: #6D28D9; }
     .badge-society { background: #F0F9FF; color: #0369A1; }
     .badge-new { background: #EFF6FF; color: #1D4ED8; }
     .badge-progress { background: #FFFBEB; color: #B45309; }
     .badge-resolved { background: #F0FDF4; color: #15803D; }
 
-    .issue-flats {
+    /* ============ Kanban Board ============ */
+    .kanban-board { display: none; }
+    .kanban-board.active { display: block; }
+
+    .swim-lane {
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .swim-lane-header {
+      background: var(--bg-tertiary);
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .swim-lane-header .lane-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .lane-dot-builder { background: var(--builder); }
+    .lane-dot-society { background: var(--society); }
+    .swim-lane-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      min-height: 100px;
+    }
+    .kanban-column {
+      padding: 8px;
+      border-right: 1px solid var(--border-light);
+      min-height: 80px;
+    }
+    .kanban-column:last-child { border-right: none; }
+    .kanban-col-header {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 4px 6px 8px;
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid var(--border-light);
     }
-    .flats-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-    .flat-chip {
-      display: inline-block;
-      padding: 1px 7px;
-      background: var(--bg-tertiary);
-      border-radius: 6px;
-      font-size: 0.68rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-    .complaint-count {
+    .kanban-col-count {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 22px; height: 22px;
-      border-radius: 11px;
-      background: var(--accent);
-      color: white;
-      font-size: 0.68rem;
-      font-weight: 600;
-      margin-left: auto;
-      padding: 0 6px;
+      min-width: 16px; height: 16px;
+      border-radius: 8px;
+      background: var(--bg-tertiary);
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 0 4px;
     }
 
-    /* Empty / Error state */
+    .kanban-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      font-size: 0.72rem;
+      cursor: default;
+      transition: box-shadow 0.15s ease, transform 0.15s ease;
+    }
+    .kanban-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .kanban-card.draggable {
+      cursor: grab;
+    }
+    .kanban-card.draggable:active {
+      cursor: grabbing;
+    }
+    .kanban-card.dragging {
+      opacity: 0.5;
+      transform: rotate(2deg);
+    }
+    .kanban-column.drag-over {
+      background: #EEF2FF;
+    }
+    .kanban-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .kanban-card-num {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .kanban-card-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px; height: 18px;
+      border-radius: 9px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+    .kanban-card-title {
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .kanban-card-flats {
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
+      margin-top: 5px;
+    }
+    .kanban-flat-chip {
+      display: inline-block;
+      padding: 0px 5px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 640px) {
+      .swim-lane-body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .swim-lane-body::-webkit-scrollbar { display: none; }
+      .kanban-column {
+        min-width: 160px;
+      }
+    }
+
+    /* ============ Empty / Error state ============ */
     .empty-state {
       text-align: center;
       padding: 36px 20px;
@@ -417,6 +614,23 @@
     }
     .retry-btn:hover { background: var(--accent-hover); }
     .retry-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Flat chips in table row tooltip */
+    .issue-flats-inline {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .flat-chip {
+      display: inline-block;
+      padding: 1px 7px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
 
     /* ============ Form ============ */
     .form-group { margin-bottom: 14px; }
@@ -532,7 +746,7 @@
     .submit-btn {
       width: 100%;
       padding: 12px;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
       color: white;
       border: none;
       border-radius: var(--radius-sm);
@@ -540,10 +754,10 @@
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
-      transition: background 0.15s ease;
+      transition: opacity 0.15s ease, transform 0.08s ease;
       -webkit-tap-highlight-color: transparent;
     }
-    .submit-btn:hover { background: var(--accent-hover); }
+    .submit-btn:hover { opacity: 0.92; }
     .submit-btn:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
@@ -717,12 +931,103 @@
       .form-submit-desktop { display: none; }
     }
 
+    /* ============ MC PIN Modal ============ */
+    .pin-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(3px);
+      z-index: 3000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .pin-modal.show { display: flex; }
+    .pin-box {
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      text-align: center;
+      max-width: 280px;
+      width: 100%;
+      border: 1px solid var(--border);
+      animation: scalePop 0.25s ease-out;
+    }
+    .pin-box h3 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .pin-box p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .pin-input {
+      width: 140px;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 1.2rem;
+      font-family: inherit;
+      text-align: center;
+      letter-spacing: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      -webkit-appearance: none;
+    }
+    .pin-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .pin-error {
+      color: var(--critical);
+      font-size: 0.72rem;
+      margin-top: 8px;
+      min-height: 1.2em;
+    }
+    .pin-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      justify-content: center;
+    }
+    .pin-actions button {
+      padding: 8px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.15s ease;
+    }
+    .pin-cancel {
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+    }
+    .pin-submit {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent) !important;
+    }
+
     /* ============ Footer ============ */
     .footer {
       text-align: center;
       padding: 20px;
       font-size: 0.68rem;
       color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .footer-tagline {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      margin-top: 2px;
     }
 
     /* ============ Scrollbar ============ */
@@ -735,8 +1040,11 @@
 
   <!-- Header -->
   <div class="header">
-    <h1>अनुप्रिता बी को. हौ. सो. लि.</h1>
-    <p>सोसायटी सूचना / तक्रार नोंदणी</p>
+    <div class="header-content">
+      <h1>अनुप्रिता बी को. हौ. सो. लि.</h1>
+      <p>सोसायटी सूचना / तक्रार नोंदणी</p>
+    </div>
+    <button class="mc-login-btn" id="mcLoginBtn" onclick="handleMcLogin()">MC लॉगिन</button>
   </div>
 
   <div class="container">
@@ -769,15 +1077,30 @@
         </div>
       </div>
 
+      <!-- Tab Switcher -->
+      <div class="tab-switcher">
+        <button class="tab-btn active" onclick="switchTab('table', this)">सूची</button>
+        <button class="tab-btn" onclick="switchTab('kanban', this)">बोर्ड</button>
+      </div>
+
       <!-- Filters -->
       <div class="filters" id="filterBar"></div>
 
-      <!-- Issues List -->
-      <div class="issues-list" id="issuesList">
-        <div class="skeleton-card"><div class="skeleton-line skeleton-line-short"></div><div class="skeleton-line skeleton-line-long"></div><div class="skeleton-badges"><div class="skeleton-badge"></div><div class="skeleton-badge"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-line skeleton-line-short"></div><div class="skeleton-line skeleton-line-medium"></div><div class="skeleton-badges"><div class="skeleton-badge"></div><div class="skeleton-badge"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton-line skeleton-line-short"></div><div class="skeleton-line skeleton-line-long"></div><div class="skeleton-badges"><div class="skeleton-badge"></div><div class="skeleton-badge"></div></div></div>
+      <!-- Table View (default) -->
+      <div id="tableView">
+        <div id="issuesList">
+          <table class="skeleton-table">
+            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-medium"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-medium"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+            <tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>
+          </table>
+        </div>
       </div>
+
+      <!-- Kanban View -->
+      <div id="kanbanView" class="kanban-board"></div>
     </div>
 
     <!-- Form Section -->
@@ -826,7 +1149,7 @@
           <label class="form-label">तुमची सूचना / तक्रार <span class="required">*</span></label>
           <textarea id="description" class="form-input" required
             placeholder="तुमची तक्रार किंवा सूचना इथे लिहा. English किंवा मराठी — दोन्ही चालेल. एका वेळी अनेक तक्रारी लिहू शकता."></textarea>
-          <div class="form-hint">अनेक तक्रारी स्वयंचलितपणे वेगळ्या केल्या जातील, प्राधान्य ठरवले जाईल, आणि मागील तक्रारींशी जोडल्या जातील</div>
+          <div class="form-hint">अनेक तक्रारी स्वयंचलितपणे वेगळ्या केल्या जातील आणि मागील तक्रारींशी जोडल्या जातील</div>
         </div>
 
         <div class="form-group">
@@ -853,7 +1176,8 @@
     </div>
 
     <div class="footer">
-      अनुप्रिता बी को. हौ. सो. लि.
+      <div>अनुप्रिता बी को. हौ. सो. लि.</div>
+      <div class="footer-tagline">AI-सहाय्यित तक्रार व्यवस्थापन &middot; <span id="footerYear"></span></div>
     </div>
   </div>
 
@@ -874,9 +1198,23 @@
     </div>
   </div>
 
+  <!-- MC PIN Modal -->
+  <div class="pin-modal" id="pinModal">
+    <div class="pin-box">
+      <h3>MC लॉगिन</h3>
+      <p>4-अंकी PIN टाका</p>
+      <input type="password" class="pin-input" id="pinInput" maxlength="4" pattern="[0-9]{4}" inputmode="numeric">
+      <div class="pin-error" id="pinError"></div>
+      <div class="pin-actions">
+        <button class="pin-cancel" onclick="closePinModal()">रद्द करा</button>
+        <button class="pin-submit" onclick="submitPin()">लॉगिन</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ============================================================
-    // Apps Script API URL — UPDATE THIS after new deployment
+    // Apps Script API URL
     // ============================================================
     var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzpWv13cpqmOyhkywD7fVsMqYlW7zxRTCULKgst6ARz54gAXSw3HxFy9MayXz_unwDr/exec';
 
@@ -885,8 +1223,10 @@
     // ============================================================
     var allIssues = [];
     var currentFilter = 'all';
+    var currentTab = 'table';
     var selectedPhotos = [];
     var loadTimeout = null;
+    var isMcAuthenticated = false;
 
     var statusMessages = [
       'तक्रार विश्लेषण सुरू...',
@@ -901,19 +1241,18 @@
     // Load on DOMContentLoaded
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('footerYear').textContent = new Date().getFullYear();
       loadIssues();
     });
 
     function loadIssues() {
       console.log('[Tracker] Loading issues via fetch...');
 
-      // Show skeleton loading
       document.getElementById('issuesList').innerHTML =
-        '<div class="skeleton-card"><div class="skeleton-line skeleton-line-short"></div><div class="skeleton-line skeleton-line-long"></div><div class="skeleton-badges"><div class="skeleton-badge"></div><div class="skeleton-badge"></div></div></div>' +
-        '<div class="skeleton-card"><div class="skeleton-line skeleton-line-short"></div><div class="skeleton-line skeleton-line-medium"></div><div class="skeleton-badges"><div class="skeleton-badge"></div><div class="skeleton-badge"></div></div></div>' +
-        '<div class="skeleton-card"><div class="skeleton-line skeleton-line-short"></div><div class="skeleton-line skeleton-line-long"></div><div class="skeleton-badges"><div class="skeleton-badge"></div><div class="skeleton-badge"></div></div></div>';
+        '<table class="skeleton-table">' +
+        '<tr><td><div class="skeleton-line skeleton-line-short"></div></td><td><div class="skeleton-line skeleton-line-long"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-badge-sm"></div></td><td><div class="skeleton-line skeleton-line-short"></div></td></tr>'.repeat(5) +
+        '</table>';
 
-      // 15-second timeout
       loadTimeout = setTimeout(function() {
         console.log('[Tracker] Load timeout after 15 seconds');
         showLoadError('तक्रारी लोड होण्यास वेळ लागत आहे');
@@ -931,6 +1270,7 @@
               renderStats();
               renderFilters();
               renderIssues();
+              renderKanban();
             } else {
               console.error('[Tracker] API error:', data.error);
               showLoadError('तक्रारी लोड करता आल्या नाहीत');
@@ -965,7 +1305,25 @@
     }
 
     // ============================================================
-    // Render Stats
+    // Tab Switching
+    // ============================================================
+    function switchTab(tab, btn) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      if (tab === 'table') {
+        document.getElementById('tableView').style.display = 'block';
+        document.getElementById('kanbanView').classList.remove('active');
+      } else {
+        document.getElementById('tableView').style.display = 'none';
+        document.getElementById('kanbanView').classList.add('active');
+        renderKanban();
+      }
+    }
+
+    // ============================================================
+    // Render Stats (with count-up animation)
     // ============================================================
     function renderStats() {
       var total = allIssues.length;
@@ -973,34 +1331,46 @@
       var society = allIssues.filter(function(i) { return i.category === 'सोसायटी'; }).length;
       var resolved = allIssues.filter(function(i) { return i.status === 'निराकरण'; }).length;
 
-      document.getElementById('statsGrid').innerHTML =
-        '<div class="stat-card stat-total">' +
-          '<div class="stat-number">' + total + '</div>' +
-          '<div class="stat-label">एकूण तक्रारी</div>' +
-        '</div>' +
-        '<div class="stat-card stat-builder">' +
-          '<div class="stat-number">' + builder + '</div>' +
-          '<div class="stat-label">बिल्डर</div>' +
-        '</div>' +
-        '<div class="stat-card stat-society">' +
-          '<div class="stat-number">' + society + '</div>' +
-          '<div class="stat-label">सोसायटी</div>' +
-        '</div>' +
-        '<div class="stat-card stat-resolved">' +
-          '<div class="stat-number">' + resolved + '</div>' +
-          '<div class="stat-label">निराकरण</div>' +
+      var stats = [
+        { cls: 'stat-total', value: total, label: 'एकूण तक्रारी' },
+        { cls: 'stat-builder', value: builder, label: 'बिल्डर' },
+        { cls: 'stat-society', value: society, label: 'सोसायटी' },
+        { cls: 'stat-resolved', value: resolved, label: 'निराकरण' }
+      ];
+
+      document.getElementById('statsGrid').innerHTML = stats.map(function(s) {
+        return '<div class="stat-card ' + s.cls + '">' +
+          '<div class="stat-number" data-target="' + s.value + '">0</div>' +
+          '<div class="stat-label">' + s.label + '</div>' +
         '</div>';
+      }).join('');
+
+      // Animate numbers
+      document.querySelectorAll('.stat-number[data-target]').forEach(function(el) {
+        var target = parseInt(el.getAttribute('data-target'));
+        if (target === 0) { el.textContent = '0'; return; }
+        var start = 0;
+        var duration = 300;
+        var startTime = null;
+        function step(ts) {
+          if (!startTime) startTime = ts;
+          var progress = Math.min((ts - startTime) / duration, 1);
+          el.textContent = Math.floor(progress * target);
+          if (progress < 1) requestAnimationFrame(step);
+          else el.textContent = target;
+        }
+        requestAnimationFrame(step);
+      });
     }
 
     // ============================================================
-    // Render Filters
+    // Render Filters (no priority/तातडी filter)
     // ============================================================
     function renderFilters() {
       var counts = {
         all: allIssues.length,
         builder: allIssues.filter(function(i) { return i.category === 'बिल्डर'; }).length,
         society: allIssues.filter(function(i) { return i.category === 'सोसायटी'; }).length,
-        high: allIssues.filter(function(i) { return i.priority && i.priority.indexOf('High') !== -1; }).length,
         progress: allIssues.filter(function(i) { return i.status === 'प्रगतीत'; }).length,
         resolved: allIssues.filter(function(i) { return i.status === 'निराकरण'; }).length
       };
@@ -1009,7 +1379,6 @@
         { key: 'all', label: 'सर्व' },
         { key: 'builder', label: 'बिल्डर' },
         { key: 'society', label: 'सोसायटी' },
-        { key: 'high', label: 'तातडी' },
         { key: 'progress', label: 'प्रगतीत' },
         { key: 'resolved', label: 'निराकरण' }
       ];
@@ -1025,71 +1394,275 @@
     }
 
     // ============================================================
-    // Render Issues
+    // Render Table View
     // ============================================================
     function renderIssues() {
       try {
-      var filtered = filterIssues(allIssues, currentFilter);
-      var list = document.getElementById('issuesList');
-      console.log('[Tracker] Rendering', filtered.length, 'issues');
+        var filtered = filterIssues(allIssues, currentFilter);
+        var list = document.getElementById('issuesList');
+        console.log('[Tracker] Rendering', filtered.length, 'issues in table');
 
-      if (filtered.length === 0) {
-        list.innerHTML =
-          '<div class="empty-state">' +
-            '<svg class="empty-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
-              '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>' +
-              '<polyline points="14 2 14 8 20 8"/>' +
-              '<line x1="16" y1="13" x2="8" y2="13"/>' +
-              '<line x1="16" y1="17" x2="8" y2="17"/>' +
-            '</svg>' +
-            '<div class="empty-title">या प्रकारच्या तक्रारी सापडल्या नाहीत</div>' +
-            '<div class="empty-sub">नवीन तक्रार नोंदवण्यासाठी खालील फॉर्म वापरा</div>' +
-          '</div>';
-        return;
-      }
+        if (filtered.length === 0) {
+          list.innerHTML =
+            '<div class="empty-state">' +
+              '<svg class="empty-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>' +
+                '<polyline points="14 2 14 8 20 8"/>' +
+                '<line x1="16" y1="13" x2="8" y2="13"/>' +
+                '<line x1="16" y1="17" x2="8" y2="17"/>' +
+              '</svg>' +
+              '<div class="empty-title">या प्रकारच्या तक्रारी सापडल्या नाहीत</div>' +
+              '<div class="empty-sub">नवीन तक्रार नोंदवण्यासाठी खालील फॉर्म वापरा</div>' +
+            '</div>';
+          return;
+        }
 
-      list.innerHTML = filtered.map(function(issue, idx) {
-        var rb = issue.reportedBy ? String(issue.reportedBy) : '';
-        var flats = rb ? rb.split(',').map(function(f) { return f.trim(); }) : [];
-        var flatChips = flats.slice(0, 5).map(function(f) {
-          return '<span class="flat-chip">' + escapeHtml(f) + '</span>';
+        var html = '<div class="issues-table-wrap"><table class="issues-table">' +
+          '<thead><tr>' +
+            '<th>#</th>' +
+            '<th>तक्रार</th>' +
+            '<th>प्रकार</th>' +
+            '<th>स्थिती</th>' +
+            '<th>तक्रारी</th>' +
+          '</tr></thead><tbody>';
+
+        html += filtered.map(function(issue) {
+          return '<tr>' +
+            '<td class="col-num">' + issue.issueNo + '</td>' +
+            '<td class="col-issue">' + escapeHtml(issue.issue) + '</td>' +
+            '<td class="col-cat">' + getCategoryBadge(issue.category) + '</td>' +
+            '<td class="col-status">' + getStatusBadge(issue.status) + '</td>' +
+            '<td class="col-count"><span class="count-circle">' + (issue.count || 0) + '</span></td>' +
+          '</tr>';
         }).join('');
-        if (flats.length > 5) flatChips += '<span class="flat-chip">+' + (flats.length - 5) + '</span>';
 
-        var priorityClass = '';
-        if (issue.priority && issue.priority.indexOf('High') !== -1) priorityClass = ' priority-high';
-        else if (issue.priority && issue.priority.indexOf('Medium') !== -1) priorityClass = ' priority-medium';
-        else if (issue.priority && issue.priority.indexOf('Low') !== -1) priorityClass = ' priority-low';
-
-        return '<div class="issue-card' + priorityClass + '" style="animation-delay: ' + (idx * 0.04) + 's">' +
-          '<div class="issue-card-header">' +
-            '<span class="issue-number">#' + issue.issueNo + '</span>' +
-            '<div class="issue-title">' + escapeHtml(issue.issue) + '</div>' +
-          '</div>' +
-          '<div class="issue-meta">' +
-            getCategoryBadge(issue.category) +
-            getPriorityBadge(issue.priority) +
-            getStatusBadge(issue.status) +
-          '</div>' +
-          '<div class="issue-flats">' +
-            '<span class="flats-label">सदनिका:</span>' +
-            flatChips +
-            '<span class="complaint-count">' + (issue.count || 0) + '</span>' +
-          '</div>' +
-        '</div>';
-      }).join('');
-      console.log('[Tracker] Render complete');
+        html += '</tbody></table></div>';
+        list.innerHTML = html;
+        console.log('[Tracker] Table render complete');
       } catch(e) {
         console.error('[Tracker] Render error:', e.message, e.stack);
         showLoadError('तक्रारी दाखवता आल्या नाहीत: ' + e.message);
       }
     }
 
+    // ============================================================
+    // Render Kanban Board
+    // ============================================================
+    function renderKanban() {
+      var filtered = filterIssues(allIssues, currentFilter);
+      var kanbanEl = document.getElementById('kanbanView');
+
+      var categories = ['बिल्डर', 'सोसायटी'];
+      var statuses = ['नवीन', 'प्रगतीत', 'निराकरण'];
+      var dotClasses = { 'बिल्डर': 'lane-dot-builder', 'सोसायटी': 'lane-dot-society' };
+
+      var html = '';
+
+      categories.forEach(function(cat) {
+        var catIssues = filtered.filter(function(i) { return i.category === cat; });
+
+        html += '<div class="swim-lane">';
+        html += '<div class="swim-lane-header"><span class="lane-dot ' + dotClasses[cat] + '"></span>' + cat + '</div>';
+        html += '<div class="swim-lane-body">';
+
+        statuses.forEach(function(status) {
+          var colIssues = catIssues.filter(function(i) { return i.status === status; });
+          var colId = 'col-' + cat + '-' + status;
+
+          html += '<div class="kanban-column" id="' + colId + '" data-category="' + cat + '" data-status="' + status + '"' +
+            (isMcAuthenticated ? ' ondragover="kanbanDragOver(event)" ondrop="kanbanDrop(event)" ondragleave="kanbanDragLeave(event)"' : '') + '>';
+          html += '<div class="kanban-col-header">' + status +
+            ' <span class="kanban-col-count">' + colIssues.length + '</span></div>';
+
+          colIssues.forEach(function(issue) {
+            var rb = issue.reportedBy ? String(issue.reportedBy) : '';
+            var flats = rb ? rb.split(',').map(function(f) { return f.trim(); }) : [];
+            var flatChips = flats.slice(0, 3).map(function(f) {
+              return '<span class="kanban-flat-chip">' + escapeHtml(f) + '</span>';
+            }).join('');
+            if (flats.length > 3) flatChips += '<span class="kanban-flat-chip">+' + (flats.length - 3) + '</span>';
+
+            var draggable = isMcAuthenticated ? ' draggable="true" ondragstart="kanbanDragStart(event)"' : '';
+            var draggableClass = isMcAuthenticated ? ' draggable' : '';
+
+            html += '<div class="kanban-card' + draggableClass + '" data-issue-no="' + issue.issueNo + '" data-category="' + cat + '"' + draggable + '>' +
+              '<div class="kanban-card-header">' +
+                '<span class="kanban-card-num">#' + issue.issueNo + '</span>' +
+                '<span class="kanban-card-count">' + (issue.count || 0) + '</span>' +
+              '</div>' +
+              '<div class="kanban-card-title">' + escapeHtml(issue.issue) + '</div>' +
+              (flatChips ? '<div class="kanban-card-flats">' + flatChips + '</div>' : '') +
+            '</div>';
+          });
+
+          html += '</div>';
+        });
+
+        html += '</div></div>';
+      });
+
+      kanbanEl.innerHTML = html;
+    }
+
+    // ============================================================
+    // Kanban Drag & Drop (MC only)
+    // ============================================================
+    var draggedIssueNo = null;
+    var draggedCategory = null;
+
+    function kanbanDragStart(e) {
+      draggedIssueNo = e.target.getAttribute('data-issue-no');
+      draggedCategory = e.target.getAttribute('data-category');
+      e.target.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', draggedIssueNo);
+    }
+
+    function kanbanDragOver(e) {
+      e.preventDefault();
+      var col = e.currentTarget;
+      if (col.getAttribute('data-category') === draggedCategory) {
+        col.classList.add('drag-over');
+        e.dataTransfer.dropEffect = 'move';
+      }
+    }
+
+    function kanbanDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function kanbanDrop(e) {
+      e.preventDefault();
+      var col = e.currentTarget;
+      col.classList.remove('drag-over');
+
+      var targetCategory = col.getAttribute('data-category');
+      var targetStatus = col.getAttribute('data-status');
+
+      if (targetCategory !== draggedCategory) return;
+
+      // Remove dragging class
+      document.querySelectorAll('.kanban-card.dragging').forEach(function(el) {
+        el.classList.remove('dragging');
+      });
+
+      // Update status via API
+      updateIssueStatus(draggedIssueNo, targetStatus);
+    }
+
+    function updateIssueStatus(issueNo, newStatus) {
+      // Optimistic update
+      allIssues.forEach(function(issue) {
+        if (issue.issueNo == issueNo) {
+          issue.status = newStatus;
+        }
+      });
+      renderKanban();
+      renderStats();
+      renderFilters();
+      if (currentTab === 'table') renderIssues();
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'updateStatus', issueNo: issueNo, newStatus: newStatus })
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.success) {
+            console.error('[Tracker] Status update failed:', data.error);
+            loadIssues(); // Reload to revert
+          }
+        })
+        .catch(function(err) {
+          console.error('[Tracker] Status update fetch failed:', err);
+          loadIssues();
+        });
+    }
+
+    // ============================================================
+    // Touch drag support for mobile Kanban
+    // ============================================================
+    (function() {
+      var touchCard = null;
+      var touchClone = null;
+      var touchStartX, touchStartY;
+
+      document.addEventListener('touchstart', function(e) {
+        var card = e.target.closest('.kanban-card.draggable');
+        if (!card) return;
+        touchCard = card;
+        draggedIssueNo = card.getAttribute('data-issue-no');
+        draggedCategory = card.getAttribute('data-category');
+        var touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+      }, { passive: true });
+
+      document.addEventListener('touchmove', function(e) {
+        if (!touchCard) return;
+        var touch = e.touches[0];
+        var dx = Math.abs(touch.clientX - touchStartX);
+        var dy = Math.abs(touch.clientY - touchStartY);
+        if (dx > 10 || dy > 10) {
+          e.preventDefault();
+          if (!touchClone) {
+            touchClone = touchCard.cloneNode(true);
+            touchClone.style.position = 'fixed';
+            touchClone.style.zIndex = '9999';
+            touchClone.style.width = touchCard.offsetWidth + 'px';
+            touchClone.style.opacity = '0.85';
+            touchClone.style.pointerEvents = 'none';
+            touchClone.style.transform = 'rotate(2deg)';
+            document.body.appendChild(touchClone);
+            touchCard.style.opacity = '0.3';
+          }
+          touchClone.style.left = (touch.clientX - touchCard.offsetWidth / 2) + 'px';
+          touchClone.style.top = (touch.clientY - 20) + 'px';
+
+          // Highlight target column
+          document.querySelectorAll('.kanban-column.drag-over').forEach(function(c) { c.classList.remove('drag-over'); });
+          var target = document.elementFromPoint(touch.clientX, touch.clientY);
+          if (target) {
+            var col = target.closest('.kanban-column');
+            if (col && col.getAttribute('data-category') === draggedCategory) {
+              col.classList.add('drag-over');
+            }
+          }
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchend', function(e) {
+        if (!touchCard || !touchClone) {
+          touchCard = null;
+          return;
+        }
+
+        var touch = e.changedTouches[0];
+        var target = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (target) {
+          var col = target.closest('.kanban-column');
+          if (col && col.getAttribute('data-category') === draggedCategory) {
+            var newStatus = col.getAttribute('data-status');
+            updateIssueStatus(draggedIssueNo, newStatus);
+          }
+        }
+
+        document.querySelectorAll('.kanban-column.drag-over').forEach(function(c) { c.classList.remove('drag-over'); });
+        touchCard.style.opacity = '';
+        if (touchClone && touchClone.parentNode) touchClone.parentNode.removeChild(touchClone);
+        touchCard = null;
+        touchClone = null;
+      }, { passive: true });
+    })();
+
+    // ============================================================
+    // Filter Logic (no priority filter)
+    // ============================================================
     function filterIssues(issues, filter) {
       switch(filter) {
         case 'builder': return issues.filter(function(i) { return i.category === 'बिल्डर'; });
         case 'society': return issues.filter(function(i) { return i.category === 'सोसायटी'; });
-        case 'high': return issues.filter(function(i) { return i.priority && i.priority.indexOf('High') !== -1; });
         case 'progress': return issues.filter(function(i) { return i.status === 'प्रगतीत'; });
         case 'resolved': return issues.filter(function(i) { return i.status === 'निराकरण'; });
         default: return issues;
@@ -1101,19 +1674,12 @@
       document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
       renderIssues();
+      if (currentTab === 'kanban') renderKanban();
     }
 
     // ============================================================
-    // Badge Helpers
+    // Badge Helpers (no priority badge)
     // ============================================================
-    function getPriorityBadge(p) {
-      if (!p) return '';
-      if (p.indexOf('High') !== -1) return '<span class="badge badge-high"><span class="priority-dot"></span>तातडी</span>';
-      if (p.indexOf('Medium') !== -1) return '<span class="badge badge-medium"><span class="priority-dot"></span>मध्यम</span>';
-      if (p.indexOf('Low') !== -1) return '<span class="badge badge-low"><span class="priority-dot"></span>कमी</span>';
-      return '<span class="badge">' + escapeHtml(p) + '</span>';
-    }
-
     function getStatusBadge(s) {
       if (!s) return '';
       if (s === 'नवीन') return '<span class="badge badge-new">' + s + '</span>';
@@ -1135,6 +1701,65 @@
       div.textContent = String(text);
       return div.innerHTML;
     }
+
+    // ============================================================
+    // MC Login / PIN
+    // ============================================================
+    function handleMcLogin() {
+      if (isMcAuthenticated) {
+        isMcAuthenticated = false;
+        document.getElementById('mcLoginBtn').classList.remove('active');
+        document.getElementById('mcLoginBtn').textContent = 'MC लॉगिन';
+        if (currentTab === 'kanban') renderKanban();
+        return;
+      }
+      document.getElementById('pinModal').classList.add('show');
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinError').textContent = '';
+      setTimeout(function() { document.getElementById('pinInput').focus(); }, 100);
+    }
+
+    function closePinModal() {
+      document.getElementById('pinModal').classList.remove('show');
+    }
+
+    function submitPin() {
+      var pin = document.getElementById('pinInput').value.trim();
+      if (pin.length !== 4) {
+        document.getElementById('pinError').textContent = '4 अंक टाका';
+        return;
+      }
+
+      fetch(SCRIPT_URL + '?action=verifyPin&pin=' + encodeURIComponent(pin))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.valid) {
+            isMcAuthenticated = true;
+            document.getElementById('mcLoginBtn').classList.add('active');
+            document.getElementById('mcLoginBtn').textContent = 'MC मोड';
+            closePinModal();
+            if (currentTab === 'kanban') renderKanban();
+          } else {
+            document.getElementById('pinError').textContent = 'चुकीचा PIN';
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinInput').focus();
+          }
+        })
+        .catch(function(err) {
+          document.getElementById('pinError').textContent = 'कनेक्शन त्रुटी';
+          console.error('[Tracker] PIN verify failed:', err);
+        });
+    }
+
+    // Allow Enter key in PIN input
+    document.addEventListener('DOMContentLoaded', function() {
+      var pinInput = document.getElementById('pinInput');
+      if (pinInput) {
+        pinInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') submitPin();
+        });
+      }
+    });
 
     // ============================================================
     // Photo Handling
